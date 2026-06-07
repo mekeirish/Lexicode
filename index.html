@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"><title>PWA App</title><link rel="manifest" href="manifest.json"><script src="https://cdn.tailwindcss.com"></script><style>body{margin:0;padding:0;background-color:#030712;font-family:system-ui;min-height:100vh;display:flex;align-items:center;justify-content:center;}#root{width:100%;display:flex;justify-content:center;align-items:center;}</style></head><body><div id="root"></div><script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script><script>// Composant principal pour LB Reaactor (Blob + iframe)
+const {
+  useState
+} = React;
+
+// ------------------------------
+// CONFIGURATION DES 65+ BLOCS
+// ------------------------------
+const BLOCS_CONFIG = [{
+  id: 1,
+  type: "button",
+  label: "Push-Button Actuator",
+  actionLabel: "Botona"
+}, {
+  id: 2,
+  type: "checkbox",
+  label: "Selector Checkbox"
+}, {
+  id: 3,
+  type: "select",
+  label: "Select dropdown",
+  options: ["Option Alpha", "Option Bêta", "Option Gamma"]
+}, {
+  id: 4,
+  type: "radio",
+  label: "Radio button group",
+  options: ["Choix 1", "Choix 2"]
+}, {
+  id: 5,
+  type: "textarea",
+  label: "Textarea multi-ligne"
+}, {
+  id: 6,
+  type: "file",
+  label: "File picker"
+}, {
+  id: 7,
+  type: "date",
+  label: "Date picker"
+}, {
+  id: 8,
+  type: "number",
+  label: "Number input"
+}, {
+  id: 9,
+  type: "password",
+  label: "Password input"
+}, {
+  id: 10,
+  type: "email",
+  label: "Email input"
+}, {
+  id: 11,
+  type: "range",
+  label: "Range slider",
+  min: 0,
+  max: 100
+}, {
+  id: 12,
+  type: "toggle",
+  label: "Toggle switch"
+}, {
+  id: 13,
+  type: "search",
+  label: "Search input"
+}, {
+  id: 14,
+  type: "tel",
+  label: "Tel input"
+}, {
+  id: 15,
+  type: "color",
+  label: "Color picker"
+}, {
+  id: 16,
+  type: "progress",
+  label: "Progress bar"
+}, {
+  id: 17,
+  type: "meter",
+  label: "Meter indicator"
+}, {
+  id: 18,
+  type: "output",
+  label: "Output element"
+}, {
+  id: 19,
+  type: "time",
+  label: "Time picker"
+}, {
+  id: 20,
+  type: "week",
+  label: "Week picker"
+}, {
+  id: 21,
+  type: "month",
+  label: "Month picker"
+}, {
+  id: 22,
+  type: "datetime-local",
+  label: "Datetime-local picker"
+}, {
+  id: 23,
+  type: "url",
+  label: "URL input"
+}, {
+  id: 24,
+  type: "datalist",
+  label: "Datalist suggestions",
+  suggestions: ["Pomme", "Banane", "Orange", "Fraise"]
+}, {
+  id: 25,
+  type: "multiSelect",
+  label: "Multiple select",
+  options: ["Option A", "Option B", "Option C", "Option D"]
+}, {
+  id: 26,
+  type: "imageInput",
+  label: "Image input"
+}, {
+  id: 27,
+  type: "resetButton",
+  label: "Reset button"
+}, {
+  id: 28,
+  type: "simpleButton",
+  label: "Simple button"
+}, {
+  id: 29,
+  type: "badge",
+  label: "Badge",
+  text: "Nouveau"
+}, {
+  id: 30,
+  type: "badgeCount",
+  label: "Badge with count",
+  count: 3
+}, {
+  id: 31,
+  type: "navMenu",
+  label: "Navigation menu",
+  items: ["Accueil", "Profil", "Paramètres"]
+}, {
+  id: 32,
+  type: "bottomTabBar",
+  label: "Bottom tab bar",
+  icons: ["🏠", "❤️", "🔍", "👤"]
+}, {
+  id: 33,
+  type: "avatar",
+  label: "Avatar",
+  src: "https://i.pravatar.cc/100?img=7"
+}, {
+  id: 34,
+  type: "avatarStatus",
+  label: "Avatar with status",
+  src: "https://i.pravatar.cc/100?img=7"
+}, {
+  id: 35,
+  type: "card",
+  label: "Card",
+  title: "Titre de la carte",
+  desc: "Description courte",
+  img: "https://picsum.photos/200/120?random=1"
+}, {
+  id: 36,
+  type: "cardActions",
+  label: "Card with actions",
+  title: "Mon article"
+}, {
+  id: 37,
+  type: "spinner",
+  label: "Spinner"
+}, {
+  id: 38,
+  type: "circularProgress",
+  label: "Circular progress",
+  initialValue: 0.65
+}, {
+  id: 39,
+  type: "starRating",
+  label: "Star rating",
+  maxStars: 5
+}, {
+  id: 40,
+  type: "likeButton",
+  label: "Like button",
+  initialLikes: 42
+}, {
+  id: 41,
+  type: "stepper",
+  label: "Stepper",
+  steps: 3
+}, {
+  id: 42,
+  type: "tabs",
+  label: "Tabs",
+  tabs: ["Tab1", "Tab2", "Tab3"]
+}, {
+  id: 43,
+  type: "alert",
+  label: "Alert",
+  message: "⚠️ Attention !"
+}, {
+  id: 44,
+  type: "tooltip",
+  label: "Tooltip",
+  text: "Hover moi"
+}, {
+  id: 45,
+  type: "modalTrigger",
+  label: "Modal trigger"
+}, {
+  id: 46,
+  type: "list",
+  label: "List",
+  items: ["Élément un", "Élément deux", "Élément trois"]
+}, {
+  id: 47,
+  type: "notificationDot",
+  label: "Notification dot"
+}, {
+  id: 48,
+  type: "searchBar",
+  label: "Search bar"
+}, {
+  id: 49,
+  type: "battery",
+  label: "Battery gauge",
+  level: 65
+}, {
+  id: 50,
+  type: "profileCard",
+  label: "Profile card",
+  name: "Brahim Laiche",
+  handle: "@brahim",
+  src: "https://i.pravatar.cc/100?img=7"
+}, {
+  id: 51,
+  type: "passwordStrength",
+  label: "Password strength",
+  strength: "Faible"
+}, {
+  id: 52,
+  type: "customDropdown",
+  label: "Custom dropdown"
+}, {
+  id: 53,
+  type: "infoAlert",
+  label: "Info alert",
+  message: "Information importante"
+}, {
+  id: 54,
+  type: "imageCaption",
+  label: "Image with caption",
+  img: "https://picsum.photos/80/80?random=2",
+  caption: "Paysage"
+}, {
+  id: 55,
+  type: "volumeControl",
+  label: "Volume control"
+}, {
+  id: 56,
+  type: "toggleAlt",
+  label: "Toggle switch alt"
+}, {
+  id: 57,
+  type: "charCounter",
+  label: "Character counter",
+  maxLength: 20
+}, {
+  id: 58,
+  type: "priceBadge",
+  label: "Price badge",
+  price: "€29.99"
+}, {
+  id: 59,
+  type: "stepIndicator",
+  label: "Step indicator",
+  currentStep: 2,
+  totalSteps: 3
+}, {
+  id: 60,
+  type: "mediaEmbed",
+  label: "Media embed"
+}, {
+  id: 61,
+  type: "digitalClock",
+  label: "Digital clock"
+}, {
+  id: 62,
+  type: "iconButton",
+  label: "Icon button",
+  icon: "📤",
+  text: "Partager"
+}, {
+  id: 63,
+  type: "hoverCard",
+  label: "Hover card",
+  title: "Carte animée"
+}, {
+  id: 64,
+  type: "skeleton",
+  label: "Skeleton loader"
+}, {
+  id: 65,
+  type: "chatMessage",
+  label: "Chat message",
+  msg: "Salut ! Comment ça va ?"
+}];
+
+// ------------------------------
+// COMPOSANT PRINCIPAL
+// ------------------------------
+const App = () => {
+  const [isLit, setIsLit] = useState(false);
+  const [notification, setNotification] = useState("");
+
+  // État centralisé
+  const [formValues, setFormValues] = useState({
+    checkbox: false,
+    select: "Option Alpha",
+    radio: "Choix 1",
+    textarea: "",
+    file: null,
+    date: "",
+    number: 0,
+    password: "",
+    email: "",
+    range: 50,
+    toggle: false,
+    search: "",
+    tel: "",
+    color: "#76c893",
+    progress: 0.3,
+    meter: 0.6,
+    output: 42,
+    time: "",
+    week: "",
+    month: "",
+    datetime: "",
+    url: "",
+    datalist: "",
+    multiSelect: [],
+    badgeCount: 3,
+    likeCount: 42,
+    rating: 3,
+    circularProgress: 0.65,
+    step: 1,
+    tabActive: 0,
+    alertVisible: true,
+    tooltipVisible: false,
+    cardLiked: false,
+    searchBarText: "",
+    volume: 50,
+    toggleAlt: false,
+    charText: "",
+    stepIndicator: 2,
+    digitalTime: new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  });
+  const updateValue = (key, val) => setFormValues(prev => ({
+    ...prev,
+    [key]: val
+  }));
+
+  // Notification
+  const triggerNotification = msg => {
+    setNotification(msg);
+    setTimeout(() => setNotification(""), 2000);
+  };
+
+  // Copie avec vibration
+  const handleCopy = designation => {
+    const textToCopy = `Ajoute un ${designation} et quand je clique dessus`;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      if (navigator.vibrate) navigator.vibrate(50);
+      triggerNotification("You got it");
+    });
+  };
+
+  // Bouton rond de copie
+  const CopyButton = ({
+    designation
+  }) => {
+    const [glow, setGlow] = useState(false);
+    const handleClick = () => {
+      handleCopy(designation);
+      setGlow(true);
+      setTimeout(() => setGlow(false), 1000);
+    };
+    return /*#__PURE__*/React.createElement("button", {
+      onClick: handleClick,
+      className: `w-5 h-5 rounded-full transition-all duration-200 active:scale-90 flex-shrink-0 ${glow ? 'bg-yellow-300 shadow-[0_0_10px_yellow]' : isLit ? 'bg-[#76c893] shadow-[0_0_5px_rgba(118,200,147,0.5)]' : 'bg-[#2a4031] shadow-[inset_1px_1px_2px_rgba(0,0,0,0.3)]'}`
+    });
+  };
+
+  // Puce visuelle 20px
+  const VisualBullet = () => /*#__PURE__*/React.createElement("div", {
+    className: "w-5 h-5 rounded-full bg-[#76c893] opacity-30 flex-shrink-0 mr-2"
+  });
+
+  // Styles réutilisables
+  const inputClass = `flex-1 px-3 py-2 rounded-xl font-mono text-sm transition-all duration-300 ${isLit ? 'bg-[#1c3024] text-[#76c893] border border-[#76c893] shadow-[0_0_10px_rgba(118,200,147,0.3)]' : 'bg-[#2a4031] text-[#a9bca6] shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5)]'}`;
+  const buttonClass = `px-4 py-2 rounded-xl font-bold transition-all active:scale-95 ${isLit ? 'bg-[#76c893] text-[#1c3024] shadow-[0_0_10px_rgba(118,200,147,0.4)]' : 'bg-[#2a4031] text-[#a9bca6] shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5)]'}`;
+
+  // Rendu dynamique d'un bloc
+  const renderBlock = block => {
+    let content = null;
+    switch (block.type) {
+      case "button":
+        content = /*#__PURE__*/React.createElement("button", {
+          className: `px-8 py-4 rounded-2xl font-bold ${inputClass} active:scale-95`
+        }, block.actionLabel);
+        break;
+      case "checkbox":
+        content = /*#__PURE__*/React.createElement("div", {
+          onClick: () => updateValue("checkbox", !formValues.checkbox),
+          className: `w-12 h-12 rounded-xl cursor-pointer flex items-center justify-center ${formValues.checkbox ? 'bg-[#76c893] shadow-[0_0_15px_rgba(118,200,147,0.4)]' : 'bg-[#2a4031] shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5)]'}`
+        }, formValues.checkbox && /*#__PURE__*/React.createElement("span", {
+          className: "text-[#1c3024] text-2xl font-bold"
+        }, "\u2713"));
+        break;
+      case "select":
+        content = /*#__PURE__*/React.createElement("select", {
+          value: formValues.select,
+          onChange: e => updateValue("select", e.target.value),
+          className: inputClass
+        }, block.options.map(opt => /*#__PURE__*/React.createElement("option", {
+          key: opt
+        }, opt)));
+        break;
+      case "radio":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex gap-6 flex-1"
+        }, block.options.map(opt => /*#__PURE__*/React.createElement("label", {
+          key: opt,
+          className: "flex items-center gap-2 cursor-pointer"
+        }, /*#__PURE__*/React.createElement("input", {
+          type: "radio",
+          name: "radioGroup",
+          value: opt,
+          checked: formValues.radio === opt,
+          onChange: e => updateValue("radio", e.target.value),
+          className: "w-4 h-4 accent-[#76c893]"
+        }), /*#__PURE__*/React.createElement("span", {
+          className: `text-sm ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, opt))));
+        break;
+      case "textarea":
+        content = /*#__PURE__*/React.createElement("textarea", {
+          value: formValues.textarea,
+          onChange: e => updateValue("textarea", e.target.value),
+          rows: "2",
+          placeholder: "\xC9crivez ici...",
+          className: inputClass
+        });
+        break;
+      case "file":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "file",
+          onChange: e => updateValue("file", e.target.files[0]),
+          className: `flex-1 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold ${isLit ? 'file:bg-[#76c893] file:text-[#1c3024] text-[#76c893]' : 'file:bg-[#2a4031] file:text-[#a9bca6] text-[#a9bca6]'}`
+        });
+        break;
+      case "date":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "date",
+          value: formValues.date,
+          onChange: e => updateValue("date", e.target.value),
+          className: inputClass
+        });
+        break;
+      case "number":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "number",
+          value: formValues.number,
+          onChange: e => updateValue("number", e.target.value),
+          className: inputClass
+        });
+        break;
+      case "password":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "password",
+          value: formValues.password,
+          onChange: e => updateValue("password", e.target.value),
+          placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022",
+          className: inputClass
+        });
+        break;
+      case "email":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "email",
+          value: formValues.email,
+          onChange: e => updateValue("email", e.target.value),
+          placeholder: "exemple@domaine.com",
+          className: inputClass
+        });
+        break;
+      case "range":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex flex-col w-full gap-2"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "flex items-center justify-between gap-4"
+        }, /*#__PURE__*/React.createElement("input", {
+          type: "range",
+          min: block.min,
+          max: block.max,
+          value: formValues.range,
+          onChange: e => updateValue("range", e.target.value),
+          className: "flex-1 h-2 rounded-lg appearance-none cursor-pointer bg-[#2a4031] accent-[#76c893]"
+        })), /*#__PURE__*/React.createElement("div", {
+          className: "flex justify-between w-full mt-1"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: `text-xs ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, formValues.range, "%")));
+        break;
+      case "toggle":
+        content = /*#__PURE__*/React.createElement("button", {
+          onClick: () => updateValue("toggle", !formValues.toggle),
+          className: `relative w-14 h-7 rounded-full transition-all duration-300 ${formValues.toggle ? 'bg-[#76c893]' : 'bg-[#2a4031]'}`
+        }, /*#__PURE__*/React.createElement("div", {
+          className: `absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${formValues.toggle ? 'translate-x-7' : ''}`
+        }));
+        break;
+      case "search":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "search",
+          value: formValues.search,
+          onChange: e => updateValue("search", e.target.value),
+          placeholder: "Rechercher...",
+          className: inputClass
+        });
+        break;
+      case "tel":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "tel",
+          value: formValues.tel,
+          onChange: e => updateValue("tel", e.target.value),
+          placeholder: "+33 6 12 34 56 78",
+          className: inputClass
+        });
+        break;
+      case "color":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex items-center gap-3 flex-1"
+        }, /*#__PURE__*/React.createElement("input", {
+          type: "color",
+          value: formValues.color,
+          onChange: e => updateValue("color", e.target.value),
+          className: "w-10 h-10 rounded-full cursor-pointer border-2 border-[#76c893]"
+        }), /*#__PURE__*/React.createElement("span", {
+          className: `text-xs ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, formValues.color));
+        break;
+      case "progress":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex flex-col w-full gap-2"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "flex items-center justify-between gap-4"
+        }, /*#__PURE__*/React.createElement("progress", {
+          value: formValues.progress,
+          max: "1",
+          className: "flex-1 h-3 rounded-full overflow-hidden [&::-webkit-progress-bar]:bg-[#2a4031] [&::-webkit-progress-value]:bg-[#76c893]"
+        })), /*#__PURE__*/React.createElement("button", {
+          onClick: () => {
+            let newVal = (formValues.progress + 0.1) % 1.1;
+            updateValue("progress", newVal > 1 ? 0 : newVal);
+          },
+          className: `text-xs px-3 py-1 rounded-full transition-all active:scale-95 self-start ${buttonClass}`
+        }, "Avancer"));
+        break;
+      case "meter":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex flex-col w-full gap-2"
+        }, /*#__PURE__*/React.createElement("meter", {
+          value: formValues.meter,
+          min: "0",
+          max: "1",
+          optimum: "0.8",
+          className: "w-full h-3 rounded-full"
+        }), /*#__PURE__*/React.createElement("span", {
+          className: `text-xs ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, Math.round(formValues.meter * 100), "%"));
+        break;
+      case "output":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex flex-col w-full gap-2"
+        }, /*#__PURE__*/React.createElement("output", {
+          className: `text-xl font-bold ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, formValues.output), /*#__PURE__*/React.createElement("button", {
+          onClick: () => updateValue("output", formValues.output + 1),
+          className: `text-xs px-3 py-1 rounded-full transition-all active:scale-95 self-start ${buttonClass}`
+        }, "Incr\xE9menter"));
+        break;
+      case "time":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "time",
+          value: formValues.time,
+          onChange: e => updateValue("time", e.target.value),
+          className: inputClass
+        });
+        break;
+      case "week":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "week",
+          value: formValues.week,
+          onChange: e => updateValue("week", e.target.value),
+          className: inputClass
+        });
+        break;
+      case "month":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "month",
+          value: formValues.month,
+          onChange: e => updateValue("month", e.target.value),
+          className: inputClass
+        });
+        break;
+      case "datetime-local":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "datetime-local",
+          value: formValues.datetime,
+          onChange: e => updateValue("datetime", e.target.value),
+          className: inputClass
+        });
+        break;
+      case "url":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "url",
+          value: formValues.url,
+          onChange: e => updateValue("url", e.target.value),
+          placeholder: "https://exemple.com",
+          className: inputClass
+        });
+        break;
+      case "datalist":
+        content = /*#__PURE__*/React.createElement("input", {
+          list: "datalist-suggestions",
+          value: formValues.datalist,
+          onChange: e => updateValue("datalist", e.target.value),
+          placeholder: "Choisissez un fruit",
+          className: inputClass
+        });
+        break;
+      case "multiSelect":
+        content = /*#__PURE__*/React.createElement("select", {
+          multiple: true,
+          size: "3",
+          value: formValues.multiSelect,
+          onChange: e => updateValue("multiSelect", Array.from(e.target.selectedOptions, o => o.value)),
+          className: inputClass
+        }, block.options.map(opt => /*#__PURE__*/React.createElement("option", {
+          key: opt,
+          value: opt
+        }, opt)));
+        break;
+      case "imageInput":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "image",
+          src: "https://placehold.co/40x40/76c893/1c3024?text=Img",
+          alt: "Image input",
+          onClick: e => e.preventDefault(),
+          className: "w-10 h-10 rounded-lg cursor-pointer"
+        });
+        break;
+      case "resetButton":
+        content = /*#__PURE__*/React.createElement("input", {
+          type: "reset",
+          value: "R\xE9initialiser",
+          onClick: e => e.preventDefault(),
+          className: `px-4 py-2 rounded-xl font-bold cursor-pointer flex-1 ${isLit ? 'bg-[#1c3024] text-[#76c893] border border-[#76c893]' : 'bg-[#2a4031] text-[#a9bca6] shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5)]'}`
+        });
+        break;
+      case "simpleButton":
+        content = /*#__PURE__*/React.createElement("button", {
+          className: `px-4 py-2 rounded-xl font-bold flex-1 ${buttonClass}`
+        }, "Cliquez-moi");
+        break;
+      case "badge":
+        content = /*#__PURE__*/React.createElement("span", {
+          className: `px-3 py-1 rounded-full text-xs font-bold ${isLit ? 'bg-[#76c893] text-[#1c3024]' : 'bg-[#2a4031] text-[#a9bca6]'}`
+        }, block.text);
+        break;
+      case "badgeCount":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "relative"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "text-2xl"
+        }, "\uD83D\uDD14"), /*#__PURE__*/React.createElement("span", {
+          className: "absolute -top-1 -right-2 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center"
+        }, formValues.badgeCount));
+        break;
+      case "navMenu":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex gap-2"
+        }, block.items.map(item => /*#__PURE__*/React.createElement("button", {
+          key: item,
+          className: `text-xs px-2 py-1 rounded ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, item)));
+        break;
+      case "bottomTabBar":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex justify-around w-full"
+        }, block.icons.map(icon => /*#__PURE__*/React.createElement("span", {
+          key: icon,
+          className: "text-xl"
+        }, icon)));
+        break;
+      case "avatar":
+        content = /*#__PURE__*/React.createElement("img", {
+          src: block.src,
+          className: "w-12 h-12 rounded-full object-cover border-2 border-[#76c893]"
+        });
+        break;
+      case "avatarStatus":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "relative"
+        }, /*#__PURE__*/React.createElement("img", {
+          src: block.src,
+          className: "w-12 h-12 rounded-full object-cover"
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#1a2d21]"
+        }));
+        break;
+      case "card":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex flex-col items-start w-full"
+        }, /*#__PURE__*/React.createElement("img", {
+          src: block.img,
+          className: "w-full h-20 object-cover rounded-lg mb-2"
+        }), /*#__PURE__*/React.createElement("p", {
+          className: `text-xs font-bold ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, block.title), /*#__PURE__*/React.createElement("p", {
+          className: `text-[10px] ${isLit ? 'text-[#76c893]/70' : 'text-[#a9bca6]/70'}`
+        }, block.desc));
+        break;
+      case "cardActions":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex justify-between items-center w-full"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: `text-sm font-bold ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, block.title), /*#__PURE__*/React.createElement("div", {
+          className: "flex gap-2"
+        }, /*#__PURE__*/React.createElement("button", {
+          onClick: () => updateValue("cardLiked", !formValues.cardLiked),
+          className: `text-sm ${formValues.cardLiked ? 'text-red-500' : ''}`
+        }, "\u2764\uFE0F ", formValues.cardLiked ? '1' : ''), /*#__PURE__*/React.createElement("button", {
+          className: "text-sm"
+        }, "\uD83D\uDD17")));
+        break;
+      case "spinner":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "animate-spin rounded-full h-8 w-8 border-4 border-[#76c893] border-t-transparent"
+        });
+        break;
+      case "circularProgress":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "relative w-12 h-12"
+        }, /*#__PURE__*/React.createElement("svg", {
+          className: "w-full h-full",
+          viewBox: "0 0 36 36"
+        }, /*#__PURE__*/React.createElement("path", {
+          d: "M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831",
+          fill: "none",
+          stroke: "#2a4031",
+          strokeWidth: "3"
+        }), /*#__PURE__*/React.createElement("path", {
+          d: "M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831",
+          fill: "none",
+          stroke: "#76c893",
+          strokeWidth: "3",
+          strokeDasharray: `${formValues.circularProgress * 100}, 100`
+        }), /*#__PURE__*/React.createElement("text", {
+          x: "18",
+          y: "22",
+          textAnchor: "middle",
+          className: `text-[8px] font-bold ${isLit ? 'fill-[#76c893]' : 'fill-[#a9bca6]'}`
+        }, Math.round(formValues.circularProgress * 100), "%")));
+        break;
+      case "starRating":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex gap-1"
+        }, [...Array(block.maxStars)].map((_, i) => /*#__PURE__*/React.createElement("button", {
+          key: i,
+          onClick: () => updateValue("rating", i + 1),
+          className: `text-xl ${i + 1 <= formValues.rating ? 'text-yellow-400' : isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, "\u2605")));
+        break;
+      case "likeButton":
+        content = /*#__PURE__*/React.createElement("button", {
+          onClick: () => updateValue("likeCount", formValues.likeCount + 1),
+          className: `px-3 py-1 rounded-full flex items-center gap-1 ${buttonClass}`
+        }, "\u2764\uFE0F ", formValues.likeCount);
+        break;
+      case "stepper":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex gap-2"
+        }, [...Array(block.steps)].map((_, i) => /*#__PURE__*/React.createElement("div", {
+          key: i,
+          className: `w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${i + 1 === formValues.step ? 'bg-[#76c893] text-[#1c3024]' : isLit ? 'bg-[#1c3024] text-[#76c893] border border-[#76c893]' : 'bg-[#2a4031] text-[#a9bca6]'}`
+        }, i + 1)));
+        break;
+      case "tabs":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex w-full border-b border-[#76c893]/30"
+        }, block.tabs.map((tab, idx) => /*#__PURE__*/React.createElement("button", {
+          key: idx,
+          onClick: () => updateValue("tabActive", idx),
+          className: `flex-1 py-1 text-xs font-medium ${formValues.tabActive === idx ? `text-[#76c893] border-b-2 border-[#76c893]` : isLit ? 'text-[#76c893]/50' : 'text-[#a9bca6]/50'}`
+        }, tab)));
+        break;
+      case "alert":
+        if (!formValues.alertVisible) content = null;else content = /*#__PURE__*/React.createElement("div", {
+          className: "flex items-center justify-between w-full bg-[#76c893]/20 border border-[#76c893] rounded-lg p-2"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: `text-xs ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, block.message), /*#__PURE__*/React.createElement("button", {
+          onClick: () => updateValue("alertVisible", false),
+          className: "text-xs"
+        }, "\u2716"));
+        break;
+      case "tooltip":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "relative"
+        }, /*#__PURE__*/React.createElement("button", {
+          onMouseEnter: () => updateValue("tooltipVisible", true),
+          onMouseLeave: () => updateValue("tooltipVisible", false),
+          className: `text-sm underline ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, block.text), formValues.tooltipVisible && /*#__PURE__*/React.createElement("div", {
+          className: "absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap"
+        }, "Info bulle"));
+        break;
+      case "modalTrigger":
+        content = /*#__PURE__*/React.createElement("button", {
+          onClick: () => alert('Modal simulée'),
+          className: `px-3 py-1 rounded text-xs ${buttonClass}`
+        }, "Ouvrir modal");
+        break;
+      case "list":
+        content = /*#__PURE__*/React.createElement("ul", {
+          className: `text-xs space-y-1 ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, block.items.map(item => /*#__PURE__*/React.createElement("li", {
+          key: item
+        }, "\u2022 ", item)));
+        break;
+      case "notificationDot":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "relative"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "text-2xl"
+        }, "\uD83D\uDD14"), /*#__PURE__*/React.createElement("span", {
+          className: "absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"
+        }));
+        break;
+      case "searchBar":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex gap-1 flex-1"
+        }, /*#__PURE__*/React.createElement("input", {
+          type: "text",
+          placeholder: "Recherche...",
+          value: formValues.searchBarText,
+          onChange: e => updateValue("searchBarText", e.target.value),
+          className: `flex-1 px-2 py-1 rounded text-xs ${inputClass}`
+        }), /*#__PURE__*/React.createElement("button", {
+          className: `px-2 py-1 rounded text-xs ${buttonClass}`
+        }, "OK"));
+        break;
+      case "battery":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex items-center gap-2"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "text-sm"
+        }, "\uD83D\uDD0B"), /*#__PURE__*/React.createElement("div", {
+          className: "w-16 h-2 bg-[#2a4031] rounded-full overflow-hidden"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "h-full bg-[#76c893] rounded-full",
+          style: {
+            width: `${block.level}%`
+          }
+        })), /*#__PURE__*/React.createElement("span", {
+          className: "text-[10px]"
+        }, block.level, "%"));
+        break;
+      case "profileCard":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex items-center gap-2"
+        }, /*#__PURE__*/React.createElement("img", {
+          src: block.src,
+          className: "w-8 h-8 rounded-full"
+        }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+          className: `text-xs font-bold ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, block.name), /*#__PURE__*/React.createElement("p", {
+          className: "text-[10px] opacity-70"
+        }, block.handle)));
+        break;
+      case "passwordStrength":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex items-center gap-1"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "h-1.5 w-6 bg-red-500 rounded"
+        }), /*#__PURE__*/React.createElement("div", {
+          className: "h-1.5 w-6 bg-orange-500 rounded"
+        }), /*#__PURE__*/React.createElement("div", {
+          className: "h-1.5 w-6 bg-gray-500 rounded"
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "text-[10px] ml-1"
+        }, block.strength));
+        break;
+      case "customDropdown":
+        content = /*#__PURE__*/React.createElement("button", {
+          className: `px-3 py-1 rounded text-xs flex items-center gap-1 ${inputClass}`
+        }, "Options \u25BC");
+        break;
+      case "infoAlert":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex items-center gap-2 bg-blue-500/20 p-2 rounded-lg"
+        }, /*#__PURE__*/React.createElement("span", null, "\u2139\uFE0F"), /*#__PURE__*/React.createElement("span", {
+          className: "text-xs"
+        }, block.message));
+        break;
+      case "imageCaption":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex flex-col items-center"
+        }, /*#__PURE__*/React.createElement("img", {
+          src: block.img,
+          className: "rounded-lg w-16 h-16 object-cover"
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "text-[10px] mt-1"
+        }, block.caption));
+        break;
+      case "volumeControl":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex items-center gap-2"
+        }, /*#__PURE__*/React.createElement("span", null, "\uD83D\uDD0A"), /*#__PURE__*/React.createElement("input", {
+          type: "range",
+          min: "0",
+          max: "100",
+          value: formValues.volume,
+          onChange: e => updateValue("volume", e.target.value),
+          className: "w-24 h-1"
+        }));
+        break;
+      case "toggleAlt":
+        content = /*#__PURE__*/React.createElement("label", {
+          className: "relative inline-flex items-center cursor-pointer"
+        }, /*#__PURE__*/React.createElement("input", {
+          type: "checkbox",
+          className: "sr-only peer",
+          checked: formValues.toggleAlt,
+          onChange: () => updateValue("toggleAlt", !formValues.toggleAlt)
+        }), /*#__PURE__*/React.createElement("div", {
+          className: "w-9 h-5 bg-gray-600 rounded-full peer-checked:bg-[#76c893] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4"
+        }));
+        break;
+      case "charCounter":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex flex-col w-full"
+        }, /*#__PURE__*/React.createElement("input", {
+          type: "text",
+          maxLength: block.maxLength,
+          value: formValues.charText,
+          onChange: e => updateValue("charText", e.target.value),
+          className: `px-2 py-1 rounded text-xs ${inputClass}`,
+          placeholder: "Saisissez..."
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "text-[10px] text-right mt-1"
+        }, formValues.charText.length, "/", block.maxLength));
+        break;
+      case "priceBadge":
+        content = /*#__PURE__*/React.createElement("span", {
+          className: "px-2 py-1 bg-green-600 text-white text-xs rounded-full"
+        }, block.price);
+        break;
+      case "stepIndicator":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex items-center gap-1 w-full"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "h-1 flex-1 bg-[#76c893] rounded"
+        }), /*#__PURE__*/React.createElement("div", {
+          className: "h-1 flex-1 bg-[#76c893] rounded"
+        }), /*#__PURE__*/React.createElement("div", {
+          className: "h-1 flex-1 bg-gray-500 rounded"
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "text-[10px]"
+        }, "\xC9tape ", block.currentStep, "/", block.totalSteps));
+        break;
+      case "mediaEmbed":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "bg-gray-700 rounded-lg w-full h-24 flex items-center justify-center text-xs"
+        }, "\uD83C\uDFAC Vid\xE9o fictive");
+        break;
+      case "digitalClock":
+        content = /*#__PURE__*/React.createElement("span", {
+          className: `font-mono text-xl ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, formValues.digitalTime);
+        break;
+      case "iconButton":
+        content = /*#__PURE__*/React.createElement("button", {
+          className: `px-3 py-1 rounded-lg flex items-center gap-2 ${buttonClass}`
+        }, block.icon, " ", block.text);
+        break;
+      case "hoverCard":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "text-center w-full"
+        }, /*#__PURE__*/React.createElement("p", {
+          className: `text-sm font-bold ${isLit ? 'text-[#76c893]' : 'text-[#a9bca6]'}`
+        }, block.title), /*#__PURE__*/React.createElement("p", {
+          className: "text-[10px]"
+        }, "Survolez-moi"));
+        break;
+      case "skeleton":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "animate-pulse flex space-x-2 w-full"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "h-8 w-8 bg-gray-600 rounded-full"
+        }), /*#__PURE__*/React.createElement("div", {
+          className: "flex-1 space-y-1"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "h-2 bg-gray-600 rounded w-3/4"
+        }), /*#__PURE__*/React.createElement("div", {
+          className: "h-2 bg-gray-600 rounded w-1/2"
+        })));
+        break;
+      case "chatMessage":
+        content = /*#__PURE__*/React.createElement("div", {
+          className: "flex gap-2"
+        }, /*#__PURE__*/React.createElement("img", {
+          src: "https://i.pravatar.cc/100?img=7",
+          className: "w-6 h-6 rounded-full"
+        }), /*#__PURE__*/React.createElement("div", {
+          className: `px-2 py-1 rounded-lg max-w-[80%] ${isLit ? 'bg-[#76c893]/20 text-[#76c893]' : 'bg-[#2a4031] text-[#a9bca6]'}`
+        }, /*#__PURE__*/React.createElement("p", {
+          className: "text-xs"
+        }, block.msg)));
+        break;
+      default:
+        content = /*#__PURE__*/React.createElement("div", null, "Composant inconnu");
+    }
+    return /*#__PURE__*/React.createElement("div", {
+      key: block.id,
+      className: "flex flex-col items-center gap-3 p-4 bg-[#1a2d21] rounded-2xl shadow-[inset_2px_2px_5px_rgba(0,0,0,0.3)] w-full max-w-xs"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center w-full gap-2"
+    }, /*#__PURE__*/React.createElement(VisualBullet, null), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between gap-4 flex-1"
+    }, content, /*#__PURE__*/React.createElement(CopyButton, {
+      designation: block.label
+    }))), /*#__PURE__*/React.createElement("span", {
+      className: "text-[10px] text-[#76c893] uppercase tracking-[0.2em] opacity-80 font-mono"
+    }, block.id, ". ", block.label));
+  };
+
+  // Rendu principal
+  return /*#__PURE__*/React.createElement("div", {
+    className: "min-h-screen overflow-y-auto bg-[#1c3024] flex flex-col items-center relative font-sans"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sticky top-0 z-40 w-full bg-[#1c3024]/90 backdrop-blur-sm py-3 px-4 shadow-md"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex justify-center items-end gap-6 flex-wrap"
+  }, [20, 30, 40, 50, 60].map(size => /*#__PURE__*/React.createElement("div", {
+    key: size,
+    className: "flex flex-col items-center gap-1"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: `${size === 20 ? 'w-5 h-5' : size === 30 ? 'w-[30px] h-[30px]' : size === 40 ? 'w-10 h-10' : size === 50 ? 'w-[50px] h-[50px]' : 'w-[60px] h-[60px]'} bg-[#76c893] rounded-md shadow-md`
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] text-[#76c893] font-mono"
+  }, size, "px"))))), notification && /*#__PURE__*/React.createElement("div", {
+    className: "fixed top-24 px-6 py-3 bg-[#76c893] text-[#1c3024] font-bold rounded-xl shadow-[0_0_20px_rgba(118,200,147,0.6)] z-50 animate-pulse"
+  }, notification), /*#__PURE__*/React.createElement("header", {
+    className: "w-full flex justify-end p-6"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setIsLit(!isLit),
+    className: `px-4 py-2 rounded-full font-bold transition-all duration-300 ${isLit ? 'bg-[#76c893] text-[#1c3024] shadow-[0_0_15px_rgba(118,200,147,0.8)]' : 'bg-[#2a4031] text-[#a9bca6] shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5)]'}`
+  }, isLit ? 'ON' : 'OFF')), /*#__PURE__*/React.createElement("main", {
+    className: "w-full flex flex-col gap-12 items-center pb-12 px-6"
+  }, BLOCS_CONFIG.map(renderBlock)), /*#__PURE__*/React.createElement("footer", {
+    className: "mt-auto py-4 text-center"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[#a9bca6] opacity-60",
+    style: {
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '12px'
+    }
+  }, "Made by Brahim Laiche 2026 Paris")));
+};
+
+// Export par défaut pour ReactDOM.createRoot
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(/*#__PURE__*/React.createElement(App, null));</script><script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');</script></body></html>
